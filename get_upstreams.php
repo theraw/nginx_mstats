@@ -7,12 +7,12 @@ $redis = new Predis\Client([
     'port' => '6379',
 ]);
 
-// Get all upstreams keys
-$upstreamsKeys = $redis->keys('nginx_stats:upstreams:*');
+// Get all upstream keys
+$upstreamKeys = $redis->keys('nginx_stats:upstreams:*');
 
-// Loop through each upstreams key
-foreach ($upstreamsKeys as $upstreamKey) {
-    echo "Upstream: " . substr($upstreamKey, 20) . "<br>" . PHP_EOL;;
+// Loop through each upstream key
+foreach ($upstreamKeys as $upstreamKey) {
+    echo "Upstream: " . substr($upstreamKey, 21) . "<br>" . PHP_EOL;
 
     // Get all peers within the upstream
     $peers = $redis->hgetall($upstreamKey);
@@ -21,15 +21,15 @@ foreach ($upstreamsKeys as $upstreamKey) {
     foreach ($peers as $peerId => $peerData) {
         $peer = json_decode($peerData, true);
 
-        echo "Peer ID: " . $peerId . "<br>" . PHP_EOL;;
-        echo "Server: " . $peer['server'] . "<br>" . PHP_EOL;;
-        echo "State: " . $peer['state'] . "<br>" . PHP_EOL;;
-        echo "Requests: " . $peer['requests'] . "<br>" . PHP_EOL;;
+        echo "Peer ID: " . $peerId . "<br>" . PHP_EOL;
+        echo "Server: " . $peer['server'] . "<br>" . PHP_EOL;
+        echo "State: " . $peer['state'] . "<br>" . PHP_EOL;
+        echo "Requests: " . $peer['requests'] . "<br>" . PHP_EOL;
         // Display additional fields as needed
 
-        echo "<br>" . PHP_EOL;;
+        echo "<br>" . PHP_EOL;
     }
 
-    echo "<br>" . PHP_EOL;;
+    echo "<br>" . PHP_EOL;
 }
 ?>
