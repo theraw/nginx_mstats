@@ -34,23 +34,25 @@ $expiryTime = 30 * 24 * 60 * 60;
 
 // Loop through each server zone
 foreach ($data as $domain => $serverZone) {
+    $zoneKey = "nginx_status:server_zones:{$domain}:";
+
     // Check if the zone exists in Redis
-    if ($redis->hexists('nginx_stats:server_zones:domains', $domain)) {
+    if ($redis->hexists($zoneKey, 'data')) {
         // Get the existing data from Redis
-        $existingData = json_decode($redis->hget('nginx_stats:server_zones:domains', $domain), true);
-        
+        $existingData = json_decode($redis->hget($zoneKey, 'data'), true);
+
         // Merge the new data with existing data
         $updatedData = array_merge($existingData, $serverZone);
-        
+
         // Update the data in Redis
-        $redis->hset('nginx_stats:server_zones:domains', $domain, json_encode($updatedData));
+        $redis->hset($zoneKey, 'data', json_encode($updatedData));
     } else {
         // If the zone does not exist, store the new data in Redis
-        $redis->hset('nginx_stats:server_zones:domains', $domain, json_encode($serverZone));
+        $redis->hset($zoneKey, 'data', json_encode($serverZone));
     }
-    
+
     // Set the expiry time for the hash
-    $redis->expire('nginx_stats:server_zones:domains', $expiryTime);
+    $redis->expire($zoneKey, $expiryTime);
 }
 
 // Close the cURL request
